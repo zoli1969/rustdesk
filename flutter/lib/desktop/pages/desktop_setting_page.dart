@@ -25,6 +25,13 @@ import 'package:url_launcher/url_launcher_string.dart';
 import '../../common/widgets/dialog.dart';
 import '../../common/widgets/login.dart';
 
+const kDiamondSourceUrl = 'https://github.com/zoli1969/rustdesk/tree/diamond';
+const kDiamondLegalNotice =
+    'A RustDesk módosított változata – módosította: Diamond Stúdió, 2026.\n'
+    'Licenc: GNU Affero General Public License v3.0 (AGPL-3.0), garancia nélkül.\n'
+    'Modified version of RustDesk by Diamond Stúdió, 2026. '
+    'Licensed under AGPL-3.0, WITHOUT ANY WARRANTY.';
+
 const double _kTabWidth = 200;
 const double _kTabHeight = 42;
 const double _kCardFixedWidth = 540;
@@ -2566,6 +2573,18 @@ class _AboutState extends State<_About> {
                   },
                   child: Text(
                     translate('Website'),
+                    style: linkStyle,
+                  ).marginSymmetric(vertical: 4.0)),
+              SelectionArea(
+                  child: Text(
+                kDiamondLegalNotice,
+              ).marginSymmetric(vertical: 4.0)),
+              InkWell(
+                  onTap: () {
+                    launchUrlString(kDiamondSourceUrl);
+                  },
+                  child: Text(
+                    'Forráskód / Source code: $kDiamondSourceUrl',
                     style: linkStyle,
                   ).marginSymmetric(vertical: 4.0)),
               Container(
