@@ -43,6 +43,7 @@ env:
   UPLOAD_ARTIFACT: "true"
   SIGN_BASE_URL: "-2"
   DIAMOND_NAME: "DiamondTavsegites"
+  DIAMOND_RS_KEY: "${{ secrets.DIAMOND_RS_KEY }}"
 
 jobs:
   generate-bridge:
@@ -90,6 +91,11 @@ jobs:
           script: |
             core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
             core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+
+      - name: Check DIAMOND_RS_KEY secret
+        shell: bash
+        run: |
+          if [ -z "$DIAMOND_RS_KEY" ]; then echo "::error::DIAMOND_RS_KEY secret is missing"; exit 1; fi
 
       - name: Checkout source code
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
@@ -337,6 +343,11 @@ jobs:
           script: |
             core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
             core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+
+      - name: Check DIAMOND_RS_KEY secret
+        shell: bash
+        run: |
+          if [ -z "$DIAMOND_RS_KEY" ]; then echo "::error::DIAMOND_RS_KEY secret is missing"; exit 1; fi
 
       - name: Checkout source code
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4

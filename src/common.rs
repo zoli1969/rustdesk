@@ -2363,8 +2363,7 @@ const DIAMOND_CLIENT_CONFIG: &str = r#"{
     "override-settings": {
         "custom-rendezvous-server": "rustdesk.diamonduzenet.hu",
         "relay-server": "rustdesk.diamonduzenet.hu",
-        "api-server": "",
-        "key": "24z14DlwBdzHeoBHzLjCNLVaX1T0VHiXHM8GF3gHwdI="
+        "api-server": ""
     },
     "default-settings": {
         "enable-audio": "N",
@@ -2381,6 +2380,20 @@ fn load_diamond_client() {
     };
     if let Some(app_name) = data.remove("app-name").and_then(|v| v.as_str().map(str::to_owned)) {
         *config::APP_NAME.write().unwrap() = app_name;
+    }
+    // The server key is kept out of the public source; CI injects it from a secret at compile time.
+    match (
+        option_env!("DIAMOND_RS_KEY"),
+        data.get_mut("override-settings")
+            .and_then(|v| v.as_object_mut()),
+    ) {
+        (Some(key), Some(settings)) if !key.trim().is_empty() => {
+            settings.insert(
+                "key".to_owned(),
+                serde_json::Value::String(key.trim().to_owned()),
+            );
+        }
+        _ => log::error!("DIAMOND_RS_KEY was not set at build time"),
     }
     let mut map_display_settings = HashMap::new();
     for s in keys::KEYS_DISPLAY_SETTINGS {

@@ -15,7 +15,7 @@ A program GARANCIA NÉLKÜL érhető el. / This program comes WITHOUT ANY WARRAN
 
 | Fájl / File | Módosítás / Change |
 |---|---|
-| `src/common.rs` | Beépített programnév, szerver (`rustdesk.diamonduzenet.hu`) és nyilvános kulcs; a hang alapértelmezetten kikapcsolva / Built-in app name, server and public key; audio off by default |
+| `src/common.rs` | Beépített programnév és szerver (`rustdesk.diamonduzenet.hu`); a szerverkulcs fordításkor a `DIAMOND_RS_KEY` környezeti változóból kerül be; a hang alapértelmezetten kikapcsolva / Built-in app name and server; the server key is injected at compile time from the `DIAMOND_RS_KEY` environment variable; audio off by default |
 | `res/*`, `flutter/assets/*`, `flutter/windows/runner/resources/app_icon.ico`, `src/ui.rs` | Diamond Stúdió ikonok és logó / Diamond Stúdió icons and logo |
 | `Cargo.toml`, `libs/portable/Cargo.toml`, `flutter/windows/runner/Runner.rc` | Windows verzióadatok (terméknév, leírás) / Windows version info |
 | `flutter/lib/desktop/pages/desktop_setting_page.dart`, `src/ui/index.tis` | Licenc- és forráskód-tájékoztatás a Névjegyben / License and source notice in the About page |
