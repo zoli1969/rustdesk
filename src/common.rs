@@ -2357,7 +2357,71 @@ pub fn rustdesk_interval(i: Interval) -> ThrottledInterval {
     ThrottledInterval::new(i)
 }
 
+// Diamond Stúdió: built-in branding and server, applied without the Pro-signed custom.txt.
+const DIAMOND_CLIENT_CONFIG: &str = r#"{
+    "app-name": "Diamond Stúdió távsegítség",
+    "override-settings": {
+        "custom-rendezvous-server": "rustdesk.diamonduzenet.hu",
+        "relay-server": "rustdesk.diamonduzenet.hu",
+        "api-server": "",
+        "key": "24z14DlwBdzHeoBHzLjCNLVaX1T0VHiXHM8GF3gHwdI="
+    },
+    "default-settings": {
+        "enable-audio": "N",
+        "disable-audio": "Y"
+    }
+}"#;
+
+fn load_diamond_client() {
+    let Ok(mut data) = serde_json::from_str::<std::collections::HashMap<String, serde_json::Value>>(
+        DIAMOND_CLIENT_CONFIG,
+    ) else {
+        log::error!("Failed to parse built-in client config");
+        return;
+    };
+    if let Some(app_name) = data.remove("app-name").and_then(|v| v.as_str().map(str::to_owned)) {
+        *config::APP_NAME.write().unwrap() = app_name;
+    }
+    let mut map_display_settings = HashMap::new();
+    for s in keys::KEYS_DISPLAY_SETTINGS {
+        map_display_settings.insert(s.replace("_", "-"), s);
+    }
+    let mut map_local_settings = HashMap::new();
+    for s in keys::KEYS_LOCAL_SETTINGS {
+        map_local_settings.insert(s.replace("_", "-"), s);
+    }
+    let mut map_settings = HashMap::new();
+    for s in keys::KEYS_SETTINGS {
+        map_settings.insert(s.replace("_", "-"), s);
+    }
+    let mut buildin_settings = HashMap::new();
+    for s in keys::KEYS_BUILDIN_SETTINGS {
+        buildin_settings.insert(s.replace("_", "-"), s);
+    }
+    if let Some(default_settings) = data.remove("default-settings") {
+        read_custom_client_advanced_settings(
+            default_settings,
+            &map_display_settings,
+            &map_local_settings,
+            &map_settings,
+            &buildin_settings,
+            false,
+        );
+    }
+    if let Some(overwrite_settings) = data.remove("override-settings") {
+        read_custom_client_advanced_settings(
+            overwrite_settings,
+            &map_display_settings,
+            &map_local_settings,
+            &map_settings,
+            &buildin_settings,
+            true,
+        );
+    }
+}
+
 pub fn load_custom_client() {
+    load_diamond_client();
     #[cfg(debug_assertions)]
     if let Ok(data) = std::fs::read_to_string("./custom.txt") {
         read_custom_client(data.trim());
