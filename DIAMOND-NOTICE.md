@@ -21,7 +21,7 @@ A program GARANCIA NÉLKÜL érhető el. / This program comes WITHOUT ANY WARRAN
 | `res/*`, `flutter/assets/*`, `flutter/windows/runner/resources/app_icon.ico`, `src/ui.rs` | Diamond Stúdió ikonok és logó / Diamond Stúdió icons and logo |
 | `Cargo.toml`, `libs/portable/Cargo.toml`, `flutter/windows/runner/Runner.rc` | Windows verzióadatok (terméknév, leírás) / Windows version info |
 | `flutter/lib/desktop/pages/desktop_setting_page.dart`, `src/ui/index.tis` | Licenc- és forráskód-tájékoztatás a Névjegyben / License and source notice in the About page |
-| `.github/workflows/diamond-windows.yml` | Windows x64 (Flutter) és x86 (Sciter) build / Windows build workflow |
+| `.github/workflows/diamond-windows.yml` | Windows x64 (Flutter) és x86 (Sciter) build; a belső program a csomagolóból kimarad, aláírás után helyben, RDPKG erőforrásként kerül be / Windows build workflow; the executable is signed locally and injected as the RDPKG resource |
 
 ## Harmadik fél összetevői / Third-party components
 
