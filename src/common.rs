@@ -2360,7 +2360,20 @@ pub fn rustdesk_interval(i: Interval) -> ThrottledInterval {
 // Diamond Stúdió: built-in branding and server, applied without the Pro-signed custom.txt.
 // The app name names the service, folder, exe and registry keys, and the Windows installer
 // only accepts [a-zA-Z0-9-]+, so the accented name is used for display only.
-pub const DIAMOND_DISPLAY_NAME: &str = "Diamond Stúdió távsegítség";
+// The internal full build gets its own app name, so it never shares the config, IPC pipe,
+// service or install folder with the customer build on the same machine.
+fn is_diamond_full_client() -> bool {
+    option_env!("DIAMOND_FULL_CLIENT") == Some("Y")
+}
+
+pub fn diamond_display_name() -> &'static str {
+    if is_diamond_full_client() {
+        "Diamond Stúdió vezérlő"
+    } else {
+        "Diamond Stúdió távsegítség"
+    }
+}
+
 const DIAMOND_CLIENT_CONFIG: &str = r#"{
     "app-name": "DiamondTavsegites",
     "override-settings": {
@@ -2382,7 +2395,11 @@ fn load_diamond_client() {
         return;
     };
     if let Some(app_name) = data.remove("app-name").and_then(|v| v.as_str().map(str::to_owned)) {
-        *config::APP_NAME.write().unwrap() = app_name;
+        *config::APP_NAME.write().unwrap() = if is_diamond_full_client() {
+            "DiamondVezerlo".to_owned()
+        } else {
+            app_name
+        };
     }
     // The server key is kept out of the public source; CI injects it from a secret at compile time.
     match (
@@ -2436,7 +2453,7 @@ fn load_diamond_client() {
     }
     // The client build handed out to customers can only be controlled, so nobody can use it
     // to reach other machines through our server; only the internal build sets DIAMOND_FULL_CLIENT=Y.
-    if option_env!("DIAMOND_FULL_CLIENT") != Some("Y") {
+    if !is_diamond_full_client() {
         config::HARD_SETTINGS
             .write()
             .unwrap()

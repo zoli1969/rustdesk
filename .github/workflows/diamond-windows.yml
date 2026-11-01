@@ -324,7 +324,10 @@ jobs:
           sed -i '/dpiAware/d' res/manifest.xml
           pushd ./libs/portable
           pip3 install -r requirements.txt
-          python3 ./generate.py -f ../../rustdesk/ -o . -e ../../rustdesk/rustdesk.exe
+          # The packer extracts into %LOCALAPPDATA%\<exe name>; a variant-specific name keeps
+          # the customer and internal builds (and an official RustDesk) from sharing that folder.
+          mv ../../rustdesk/rustdesk.exe ../../rustdesk/${{ matrix.job.out-name }}.exe
+          python3 ./generate.py -f ../../rustdesk/ -o . -e ../../rustdesk/${{ matrix.job.out-name }}.exe
           popd
           mkdir -p ./SignOutput
           mv ./target/release/rustdesk-portable-packer.exe ./SignOutput/${{ matrix.job.out-name }}-${{ env.VERSION }}-x64.exe
@@ -476,7 +479,8 @@ jobs:
           sed -i '/dpiAware/d' res/manifest.xml
           pushd ./libs/portable
           pip3 install -r requirements.txt
-          python3 ./generate.py -f ../../Release/ -o . -e ../../Release/rustdesk.exe
+          mv ../../Release/rustdesk.exe ../../Release/${{ env.DIAMOND_NAME }}.exe
+          python3 ./generate.py -f ../../Release/ -o . -e ../../Release/${{ env.DIAMOND_NAME }}.exe
           popd
           mkdir -p ./SignOutput
           mv ./target/release/rustdesk-portable-packer.exe ./SignOutput/${{ env.DIAMOND_NAME }}-${{ env.VERSION }}-x86.exe
