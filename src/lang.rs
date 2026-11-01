@@ -257,7 +257,7 @@ pub fn translate_locale(name: String, locale: &str) -> String {
             {
                 let app_name = crate::get_app_name();
                 if !app_name.contains("RustDesk") {
-                    s = s.replace("RustDesk", &app_name);
+                    s = s.replace("RustDesk", crate::common::DIAMOND_DISPLAY_NAME);
                 } else {
                     // https://github.com/rustdesk/rustdesk-server-pro/issues/845
                     // If app_name contains "RustDesk" (e.g., "RustDesk-Admin"), we need to avoid

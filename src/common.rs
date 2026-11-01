@@ -2358,8 +2358,11 @@ pub fn rustdesk_interval(i: Interval) -> ThrottledInterval {
 }
 
 // Diamond Stúdió: built-in branding and server, applied without the Pro-signed custom.txt.
+// The app name names the service, folder, exe and registry keys, and the Windows installer
+// only accepts [a-zA-Z0-9-]+, so the accented name is used for display only.
+pub const DIAMOND_DISPLAY_NAME: &str = "Diamond Stúdió távsegítség";
 const DIAMOND_CLIENT_CONFIG: &str = r#"{
-    "app-name": "Diamond Stúdió távsegítség",
+    "app-name": "DiamondTavsegites",
     "override-settings": {
         "custom-rendezvous-server": "rustdesk.diamonduzenet.hu",
         "relay-server": "rustdesk.diamonduzenet.hu",

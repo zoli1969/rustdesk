@@ -3020,8 +3020,11 @@ int versionCmp(String v1, String v2) {
   return bind.versionToNumber(v: v1) - bind.versionToNumber(v: v2);
 }
 
+// Diamond Stúdió: the app name is ASCII-only for the installer, titles use the display name.
+const kDiamondDisplayName = 'Diamond Stúdió távsegítség';
+
 String getWindowName({WindowType? overrideType}) {
-  final name = bind.mainGetAppNameSync();
+  const name = kDiamondDisplayName;
   switch (overrideType ?? kWindowType) {
     case WindowType.Main:
       return name;
