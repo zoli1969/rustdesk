@@ -2434,6 +2434,14 @@ fn load_diamond_client() {
             true,
         );
     }
+    // The client build handed out to customers can only be controlled, so nobody can use it
+    // to reach other machines through our server; only the internal build sets DIAMOND_FULL_CLIENT=Y.
+    if option_env!("DIAMOND_FULL_CLIENT") != Some("Y") {
+        config::HARD_SETTINGS
+            .write()
+            .unwrap()
+            .insert("conn-type".to_owned(), "incoming".to_owned());
+    }
 }
 
 pub fn load_custom_client() {

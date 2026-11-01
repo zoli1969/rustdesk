@@ -67,7 +67,7 @@ jobs:
       target_version: Windows10
 
   build-for-windows-flutter:
-    name: ${{ matrix.job.target }}
+    name: ${{ matrix.job.target }} ${{ matrix.job.variant }}
     needs: [build-RustDeskTempTopMostWindow, generate-bridge]
     runs-on: ${{ matrix.job.os }}
     strategy:
@@ -76,6 +76,7 @@ jobs:
         job:
           # - { target: i686-pc-windows-msvc        , os: windows-2022                  }
           # - { target: x86_64-pc-windows-gnu       , os: windows-2022                  }
+          # ugyfel: incoming-only client handed out to customers.
           - {
               target: x86_64-pc-windows-msvc,
               os: windows-2022,
@@ -83,7 +84,24 @@ jobs:
               flutter-arch: x64,
               vcpkg-triplet: x64-windows-static,
               build-args: "--vram",
+              variant: ugyfel,
+              out-name: DiamondTavsegites,
+              artifact: diamond-windows-x64,
             }
+          # vezerlo: full client for Diamond Stúdió internal use only.
+          - {
+              target: x86_64-pc-windows-msvc,
+              os: windows-2022,
+              arch: x86_64,
+              flutter-arch: x64,
+              vcpkg-triplet: x64-windows-static,
+              build-args: "--vram",
+              variant: vezerlo,
+              out-name: DiamondVezerlo,
+              artifact: diamond-vezerlo-x64,
+            }
+    env:
+      DIAMOND_FULL_CLIENT: ${{ matrix.job.variant == 'vezerlo' && 'Y' || '' }}
     steps:
       - name: Export GitHub Actions cache environment variables
         uses: actions/github-script@d7906e4ad0b1822421a7e6a35d5ca353c962f410 # v6
@@ -309,13 +327,15 @@ jobs:
           python3 ./generate.py -f ../../rustdesk/ -o . -e ../../rustdesk/rustdesk.exe
           popd
           mkdir -p ./SignOutput
-          mv ./target/release/rustdesk-portable-packer.exe ./SignOutput/${{ env.DIAMOND_NAME }}-${{ env.VERSION }}-x64.exe
+          mv ./target/release/rustdesk-portable-packer.exe ./SignOutput/${{ matrix.job.out-name }}-${{ env.VERSION }}-x64.exe
 
+      # Artifacts of a public repository can be downloaded by any GitHub user, so keep them briefly.
       - name: Upload Diamond client
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: diamond-windows-x64
+          name: ${{ matrix.job.artifact }}
           path: ./SignOutput/*.exe
+          retention-days: 1
 
   # The fallback for the flutter version, we use Sciter for 32bit Windows.
   build-for-windows-sciter:
@@ -443,13 +463,6 @@ jobs:
             ls -l ./libs/portable/Runner.res;
           fi
 
-      - name: Upload unsigned
-        if: env.UPLOAD_ARTIFACT == 'true'
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: rustdesk-unsigned-windows-${{ matrix.job.arch }}
-          path: Release
-
       - name: Sign rustdesk files
         if: env.UPLOAD_ARTIFACT == 'true' && env.SIGN_BASE_URL != '-2'
         shell: bash
@@ -473,4 +486,5 @@ jobs:
         with:
           name: diamond-windows-x86
           path: ./SignOutput/*.exe
+          retention-days: 1
 
